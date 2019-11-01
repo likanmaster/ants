@@ -13,8 +13,8 @@ public class Ants {
     public static void main(String[] args) {
        //valores de entrada 
 int semilla=100;
-int tamcolonia=8; //cantidad de hormigas
-int iteraciones=5;
+int tamcolonia=15; //cantidad de hormigas
+int iteraciones=1;
 double alpha= 0.1;
 double q0=0.5;
 double betha=2.5;
@@ -33,30 +33,75 @@ double mheu[][]=matrizheuristica(mmdis,dimi);
 //mejor solucion
 int []mejorsolucion=solinicial;
 double costomejor = costo(mejorsolucion,mmdis);
-
+System.out.println ("costo de la mejor solucion " + costomejor);
 //matriz de feromonas
 double mferomona [][]=matrizferomona(costomejor,dimi); 
+//matriz de memoria
+//int [][]memoria=memoria(tamcolonia,dimi);
+ 
 
 
 
-       // for (int i = 0; i < mejorsolucion.length; i++) {
-        //     System.out.print (" " + mejorsolucion[i]);
-      //  }
- int ciclo=0;
+        System.out.println ("mejor solucion inicial");
+        for (int i = 0; i < mejorsolucion.length; i++) {
+            System.out.print ( mejorsolucion[i]+" " );
+        }
+        System.out.println (" ");
+ 
+        
+int ciclo=0;
+ 
       while ( ciclo<iteraciones || (costomejor==7544.3659)) {
          //System.out.println("Esto lo verás una vez");
          ciclo++;
          
+         //inicializar la memoria de las hormigas
+         
+         ArrayList<ArrayList<Double> > memoria = new ArrayList<ArrayList<Double> >(dimi); 
+         //System.out.println("vector de vectores ");
+        System.out.println ("memoria ");
+        for (int i = 0; i < tamcolonia; i++) {
+            ArrayList<Double> a1 = new ArrayList<Double>();
+            for (int j = 0; j < dimi; j++) {
+                double aux=mferomona[j][0]*Math.pow(mheu[j][0], betha);
+                a1.add(aux); 
+            }
+            memoria.add(a1); 
+        }
+        
+        for (int i = 0; i < memoria.size(); i++) { 
+            for (int j = 0; j < memoria.get(i).size(); j++) { 
+                System.out.print(memoria.get(i).get(j) + " "); 
+            } 
+            System.out.println(); 
+        } 
+         
+         
+        
          int colonia [][]=coloniainicial(dimi,tamcolonia);
          
-         for (int i = 0; i < dimi; i++) {//para cada vertice del grafo
-              for (int j = 1; j < tamcolonia; j++) {//para cada hormiga
+         for (int i = 0; i < tamcolonia; i++) {//para cada vertice del grafo
+              for (int j = 1; j <dimi ; j++) {//para cada hormiga
                //seleccionar el prox segmento del grafo usando la ec. 1
+               //ArrayList<Double> a1 = new ArrayList<Double>();
+               
+               
                   double nrandom=randomadec(0,1,semilla);
                //System.out.print (" numero random " + nrandom);
                   if (nrandom<q0) {//entonces siguiente jo
-                     //usar la ec 1 parte superior
-                      colonia[i][j]=mejorEcuacion1(mferomona,mheu,dimi,betha);
+                     //usar la ec 1 parte superior{]___Z}}xc
+                     //memoria.set(i).set(0);
+                    ArrayList<Double> aux = new ArrayList<Double>();
+                    aux=memoria.get(i);  
+                   
+                    aux.set(j, 0.0);
+                    
+                  //  aux.set(j, 0.0);
+                    colonia[i][j]=maximoa(aux);
+                    //aux.set(j, 0.0);
+                    //System.out.println ("el max "+maximoa(aux));
+                   memoria.set(i, aux);
+                   
                      // System.out.print ("es menor ");
                     
                   }
@@ -66,11 +111,29 @@ double mferomona [][]=matrizferomona(costomejor,dimi);
                   
               }
           
-              for (int j = 0; j < tamcolonia; j++) {//para cada hormiga
+              for (int j = 0; j < dimi; j++) {//para cada hormiga
                //Actualizar la feromona en cada segmento según la Ecuación. 4  
               }
          
          }//fin for general
+         
+         //leer la colonia alcutal
+           System.out.println (" final colonia");
+         for (int i = 0; i < tamcolonia; i++) {
+             int []aux=new int [dimi];
+            for (int j = 0; j < dimi; j++) {
+                aux[j]=colonia[i][j];
+               System.out.print (colonia[i][j]+" ");
+          }
+            double costoaux=costo(aux,mmdis);
+             if (costoaux<costomejor) {
+                 costomejor=costoaux;
+                 mejorsolucion=aux;
+                // System.out.println (" este costo es mejor  "+costoaux+" ***");
+             }
+         System.out.println (" ");
+         }
+         System.out.println ("costo de la mejor solucion 2 " + costomejor);    
          
           if (true) {//si es encontrada una mejor solución en el actual ciclo
               //Asignar como mejor solución global a la mejor solución encontrada en la iteración actual.
@@ -78,17 +141,23 @@ double mferomona [][]=matrizferomona(costomejor,dimi);
           }// fin if
          
          //Actualizar la feromona en los segmento de la mejor solución global según la Ecuación. 3
-          System.out.println (" ++++");
-          for (int i = 0; i < dimi; i++) {
-            for (int j = 0; j < dimi; j++) {
-                 System.out.print (colonia[i][j]+" ");
-            }
-            System.out.println (" ");
-        }
-       
+      
+           System.out.println ("memoria final");
+           for (int i = 0; i < memoria.size(); i++) { 
+            for (int j = 0; j < memoria.get(i).size(); j++) { 
+                System.out.print(memoria.get(i).get(j) + " "); 
+            } 
+            System.out.println(); 
+        } 
       }//fin while 
       
+      System.out.println ("mejor solucion inicial");
+        for (int i = 0; i < mejorsolucion.length; i++) {
+            System.out.print ( mejorsolucion[i]+" " );
+        }
+        System.out.println (" ");
       
+         
     } 
      
 // funciones o clases
@@ -405,7 +474,7 @@ double mferomona [][]=matrizferomona(costomejor,dimi);
        //System.out.println ("mejor solucion final coso " + mejorsolucion[mejorsolucion.length-1]);
     double finala=mejorsolucion[mejorsolucion.length-1]+mejorsolucion[0];
     total=total+finala;
-     System.out.println ("costo de la mejor solucion " + total);
+     //System.out.println ("costo de la mejor solucion " + total);
     
     return total;
     }
@@ -445,25 +514,26 @@ double mferomona [][]=matrizferomona(costomejor,dimi);
     return rndInd;
    }
 
- 
-
-    private static int mejorEcuacion1(double[][] mferomona, double[][] mheu,int dimi,double betha) {
+    private static int mejorEcuacion1(double[][] mferomona, double[][] mheu,int dimi,double betha,int nodo) {
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    double max=0;
+   
     int pos=0;
     double []vector=new double[dimi];
+    double max=vector[0];
         for (int i = 0; i < dimi; i++) {
-            double aux=mferomona[i][0]*Math.pow(mheu[1][0], betha);
+            double aux=mferomona[i][0]*Math.pow(mheu[i][0], betha);
             
             vector[i]=aux;
-           // System.out.println ("aux "+aux);
+            System.out.println ("aux "+aux);
         }
     //el max será el la posicion del vector
         for (int i = 0; i < dimi; i++) {
-            if (vector[i]>max) {
-               max=i;
+            //System.out.println ("vec pos  "+i+" tiene "+vector[i]);
+            if (vector[i]>=max) {
+               max=vector[i];
             }
         }
+           System.out.println ("max "+max);
         for (int i = 0; i < dimi; i++) {
             if (vector[i]==max) {
                 pos=i;
@@ -472,5 +542,86 @@ double mferomona [][]=matrizferomona(costomejor,dimi);
       
     return pos;
     }
-    	 
+
+    private static int[][] memoria(int tamcolonia, int dimi) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static ArrayList<Double> vecec1(double[][] mferomona, double[][] mheu, int dimi, double betha) {
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+   int dim=dimi;
+    //double []vector=new double[dimi];
+    ArrayList<Double> max = new ArrayList<Double>();
+        for (int i = 0; i < dim; i++) {
+            double aux=mferomona[i][0]*Math.pow(mheu[i][0], betha);
+            max.add(aux);
+            
+            //System.out.println ("aux "+aux);
+        }
+         return max;
+    }
+
+    private static int maximoa(ArrayList<Double> arra) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        double max=arra.get(0);
+        int pos=0;
+        for (int i = 0; i < arra.size(); i++) {
+            //System.out.println ("vec pos  "+i+" tiene "+vector[i]);
+            if (arra.get(i)>max) {
+               max=arra.get(i);
+            }
+        }
+       // System.out.println ("max "+max);
+        for (int i = 0; i < arra.size(); i++) {
+            if (arra.get(i)==max) {
+                pos=i;
+            }
+        }
+        
+       
+        return pos;
+    }
+
+    private static int posmejorsol(ArrayList<Double> arra) {
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        double max=arra.get(0);
+        int pos=0;
+        for (int i = 0; i < arra.size(); i++) {
+            //System.out.println ("vec pos  "+i+" tiene "+vector[i]);
+            if (arra.get(i)>=max) {
+               max=arra.get(i);
+            }
+        }
+       // System.out.println ("max "+max);
+        for (int i = 0; i < arra.size(); i++) {
+            if (arra.get(i)==max) {
+                pos=i;
+            }
+        }
+        
+       
+        return pos;
+    }
+
+    private static int posmejorsolvec(double[] aim) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+     double max=aim[0];
+        int pos=0;
+        for (int i = 0; i < aim.length; i++) {
+            //System.out.println ("vec pos  "+i+" tiene "+vector[i]);
+            if (aim[i]>=max) {
+               max=aim[i];
+            }
+        }
+       // System.out.println ("max "+max);
+        for (int i = 0; i < aim.length; i++) {
+            if (aim[i]==max) {
+                pos=i;
+            }
+        }
+        
+       
+        return pos;
+    }
+  
 }
