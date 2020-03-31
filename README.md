@@ -21,4 +21,6 @@ Para la ejecución del algoritmo se deben seguir los siguientes pasos:
 - para la ejecucion del programa se requiere un archivo de texto en el mismo direcorio del archivo el cual contiene las cordenadas de los nodos.
 para esta prueba se usó    berlin52.opt.tour.txt
 
+- la linea #22 de Ants.java contiene la ruta del archivo de texto. por defecto se escribió c:/berlin52.tsp.txt pero esto se debe modificar con la ubicacion que usted desee.
+
 Con la realización de todos los pasos mencionados anteriormente es posbible ejecutar el programa.
